@@ -1,0 +1,43 @@
+S -> SENTENCIA | SENTENCIA S
+
+SENTENCIA -> CREATE | READ | UPDATE | DELETE
+
+CREATE -> 'create' 'table' ID '(' CAMPOS ')'
+
+CAMPOS -> CAMPO CAMPOS_FINAL
+
+CAMPOS_FINAL -> ',' CAMPO CAMPOS_FINAL | ε
+
+CAMPO -> ID TIPO
+
+TIPO -> 'int' | 'string' | 'float'
+
+READ -> 'select' COLUMNAS 'from' ID CONDICION_WHERE
+
+COLUMNAS -> '*' | ID COLUMNAS_FINAL
+
+COLUMNAS_FINAL -> ',' ID COLUMNAS_FINAL | ε
+
+CONDICION_WHERE -> 'where' CONDICION | ε
+
+CONDICION -> ID OPER VALOR
+
+OPER -> '=' | '<' | '>' | '<=' | '>=' | '!='
+
+VALOR -> NUMERO | CADENA
+
+UPDATE -> 'update' ID 'set' ASIGNACIONES CONDICION_WHERE
+
+ASIGNACIONES -> ASIGNACION ASIGNACIONES_FINAL
+
+ASIGNACIONES_FINAL -> ',' ASIGNACION ASIGNACIONES_FINAL | ε
+
+ASIGNACION -> ID '=' VALOR
+
+DELETE -> 'delete' 'from' ID CONDICION_WHERE
+
+ID -> letra (letra | digito | '_')*
+
+NUMERO -> digito+
+
+CADENA -> '"' (caracter)* '"'
