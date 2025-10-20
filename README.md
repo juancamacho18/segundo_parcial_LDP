@@ -10,17 +10,14 @@ Gramática formal para un lenguaje de programación que permite realizar operaci
 
 Símbolo Inicial
 
-    bash``
     S
 
 Tipos de Sentencias
 
-    bash``
     SENTENCIA -> CREATE | READ | UPDATE | DELETE
 
 Sentencia CREATE (Crear tabla)
 
-    bash``
     CREATE -> 'create' 'table' ID '(' CAMPOS ')'
     CAMPOS -> CAMPO CAMPOS_FINAL
     CAMPOS_FINAL -> ',' CAMPO CAMPOS_FINAL | ε
@@ -29,7 +26,6 @@ Sentencia CREATE (Crear tabla)
 
 Sentencia READ (Consultar datos)
 
-    bash``
     READ -> 'select' COLUMNAS 'from' ID CONDICION_WHERE
     COLUMNAS -> '*' | ID COLUMNAS_FINAL
     COLUMNAS_FINAL -> ',' ID COLUMNAS_FINAL | ε
@@ -40,7 +36,6 @@ Sentencia READ (Consultar datos)
 
 Sentencia UPDATE (Actualizar datos)
 
-    bash``
     UPDATE -> 'update' ID 'set' ASIGNACIONES CONDICION_WHERE
     ASIGNACIONES -> ASIGNACION ASIGNACIONES_FINAL
     ASIGNACIONES_FINAL -> ',' ASIGNACION ASIGNACIONES_FINAL | ε
@@ -48,19 +43,16 @@ Sentencia UPDATE (Actualizar datos)
 
 Sentencia DELETE (Eliminar datos)
 
-    bash``
     DELETE -> 'delete' 'from' ID CONDICION_WHERE
 
 Terminales
 
-    bash``
     ID -> letra (letra | digito | '_')*
     NUMERO -> digito+
     CADENA -> '"' (caracter)* '"'
 
 - Ejemplos de Sentencias Válidas
 
-      sql``
       create table empleados (id int, nombre string, salario float)
       create table productos (codigo int, descripcion string, precio float)
 
