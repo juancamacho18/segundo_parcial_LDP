@@ -113,3 +113,17 @@ DELETE
 - Eliminación de registros
 
 - Condición WHERE opcional (si se omite, elimina todos los registros)
+
+Definición Formal de la Gramática
+
+- Terminales:
+
+      { 'create', 'table', 'select', 'from', 'where', 'update', 'set', 'delete',
+      'int', 'string', 'float', '*', '=', '<', '>', '<=', '>=', '!=',
+      ID, NUMERO, CADENA }
+
+- No Terminales:
+
+        { S, SENTENCIA, CREATE, READ, UPDATE, DELETE, CAMPOS, CAMPOS_FINAL, CAMPO, TIPO,
+          COLUMNAS, COLUMNAS_FINAL, CONDICION_WHERE, CONDICION, OPER, VALOR,
+          ASIGNACIONES, ASIGNACIONES_FINAL, ASIGNACION }
