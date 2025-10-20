@@ -493,12 +493,21 @@ para el desarrollo del programa se uso la siguiente gramatica que esta incluida 
 
 y al ejecutar probando con el archivo de cadenas, estos son los resultados que muestran:
 
-|cadena | tiempo CYK (ms)  |  tiempo predictivo (ms)|
-|----|-----|-----|
-| a b | 0.812 | 0.144 |
-| a a b | 1.105 | 0.220 |
-| b b a | 0.934 | 0.155 |
----------------------------------------------------------------------------
+===Comparacion de parsers===
+| cadena | tiempo CYK (ms) | tiempo predictivo (ms) |
+|------|---------|----------|
+| cuatro cinco seis | 0.075 | 0.025 |
+| uno cuatro | 0.019 | 0.010 |
+| uno | 0.007 | 0.007 |
+| uno cuatro tres | 0.028 | 0.007 |
+| cinco seis | 0.014 | 0.007 |
+| seis | 0.005 | 0.009 |
+| uno seis cuatro tres | 0.040 | 0.007 |
+| cuatro dos | 0.011 | 0.006 |
+| uno cuatro cinco seis tres | 0.064 | 0.006 |
+| uno seis | 0.011 | 0.006 |
+------------------------------------------------------------------------------------------
+comparando entre los resultados se puede concluir que el algoritmo de CYK toma mas tiempo que un algoritmo predictivo cuando hay varios terminales o simbolos en una cadena, y que cuando solo hay un dato pueden llegar a tomar el mismo o menos tiempo .
 
 ## Punto 5: Parser Descendente Recursivo con Algoritmo de Emparejamiento
 
