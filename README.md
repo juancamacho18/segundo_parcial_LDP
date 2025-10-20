@@ -198,6 +198,14 @@ La gramática soporta:
 
 - Operadores comparación: =, <, >, <=, >=, !=
 
+## Punto 3: Analizador sintactico ascendente
+
+Implementación de un analizador sintactico ascendente de una gramatica para expresiones aritmeticas simples además de calculadr conjuntos de primeros, siguientes y de predicciones.
+
+
+
+## Punto 4: Programa comparativo parser con algoritmo CYK y parser de tipo predictivo
+
 ## Punto 5: Parser Descendente Recursivo con Algoritmo de Emparejamiento
 
 Implementación de un analizador descendente recursivo con algoritmo de emparejamiento (matching) para analizar expresiones aritméticas. El analizador procesa expresiones con operadores de suma (+) y multiplicación (*), respetando la precedencia de operadores y permitiendo el uso de paréntesis.
