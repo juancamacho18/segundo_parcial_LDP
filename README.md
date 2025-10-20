@@ -76,17 +76,17 @@ Terminales
 
 2. Operadores de Comparación
 
-- = : Igualdad
+-  = : Igualdad
 
-- < : Menor que
+-  < : Menor que
 
-- > : Mayor que
+-  > : Mayor que
 
-- <= : Menor o igual que
+-  <= : Menor o igual que
 
-- >= : Mayor o igual que
+-  >= : Mayor o igual que
 
-- != : Diferente de
+-  != : Diferente de
 
 3. Estructuras Principales
 
