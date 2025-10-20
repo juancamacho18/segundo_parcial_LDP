@@ -304,7 +304,7 @@ Probar una Expresión Específica:
         │   ├── __init__()
         │   └── tokenize()
         ├── RecursiveDescentParser   # Parser principal
-        │   ├── match()              # ⭐ Algoritmo de emparejamiento
+        │   ├── match()              # Algoritmo de emparejamiento
         │   ├── parse_E()            # E → T E'
         │   ├── parse_E_prime()      # E' → + T E' | ε
         │   ├── parse_T()            # T → F T'
