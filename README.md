@@ -198,3 +198,136 @@ La gramática soporta:
 
 - Operadores comparación: =, <, >, <=, >=, !=
 
+## Punto 5: Parser Descendente Recursivo con Algoritmo de Emparejamiento
+
+Implementación de un parser descendente recursivo con algoritmo de emparejamiento (matching) para analizar expresiones aritméticas.
+
+El parser analiza expresiones con operadores de suma (+) y multiplicación (*), respetando la precedencia de operadores y permitiendo el uso de paréntesis.
+
+Objetivos
+
+- Implementar un algoritmo de emparejamiento para análisis descendente recursivo
+
+- Validar la sintaxis de expresiones aritméticas
+
+- Generar un árbol de derivación paso a paso
+
+- Detectar y reportar errores sintácticos con precisión
+
+Gramática
+
+- Gramática Original
+
+        E → E + T | T
+        T → T * F | F
+        F → ( E ) | id
+
+- Gramática Transformada (LL(1))
+
+        E  → T E'
+        E' → + T E' | ε
+        T  → F T'
+        T' → * F T' | ε
+        F  → ( E ) | id
+
+Se eliminó la recursión izquierda para hacer la gramática compatible con el análisis descendente recursivo.
+
+Arquitectura:
+
+- Componentes principales:
+
+1. Lexer (Analizador Léxico)
+
+- Convierte la cadena de entrada en tokens
+
+- Tokens reconocidos: ID, PLUS (+), MULT (*), LPAREN ((), RPAREN ()), EOF
+
+2. Parser (Analizador Sintáctico)
+
+- Implementa el análisis descendente recursivo
+
+- Una función por cada símbolo no-terminal de la gramática
+
+- Algoritmo de emparejamiento centralizado
+
+2. Algoritmo de Emparejamiento
+
+- Método match(expected_type): núcleo del algoritmo
+
+- Valida tokens esperados vs tokens encontrados
+
+- Consume tokens y avanza en la entrada
+
+- Reporta errores de sintaxis
+
+Requisitos
+
+- Python 3.7 o superior
+
+Uso:
+
+- Ejecución Básica
+
+        python descendente.py
+
+Esto ejecutará automáticamente los casos de prueba predefinidos.
+
+Uso programación:
+
+    from recursive_descent_parser import Lexer, RecursiveDescentParser
+    
+    # Crear el lexer
+    expression = "a + b * c"
+    lexer = Lexer(expression)
+    
+    # Crear el parser
+    parser = RecursiveDescentParser(lexer.tokens)
+    
+    # Realizar el análisis
+    success = parser.parse()
+    
+    # Mostrar resultados
+    parser.show_results()
+
+Probar una Expresión Específica:
+
+    from recursive_descent_parser import test_parser
+    
+    # Probar una expresión
+    test_parser("(a + b) * c")
+
+- Estructura del Código
+
+        recursive_descent_parser.py
+        ├── Token                    # Clase para representar tokens
+        ├── Lexer                    # Analizador léxico
+        │   ├── __init__()
+        │   └── tokenize()
+        ├── RecursiveDescentParser   # Parser principal
+        │   ├── match()              # ⭐ Algoritmo de emparejamiento
+        │   ├── parse_E()            # E → T E'
+        │   ├── parse_E_prime()      # E' → + T E' | ε
+        │   ├── parse_T()            # T → F T'
+        │   ├── parse_T_prime()      # T' → * F T' | ε
+        │   ├── parse_F()            # F → ( E ) | id
+        │   ├── parse()              # Función principal
+        │   └── show_results()       # Mostrar resultados
+        └── test_parser()            # Función de prueba
+
+Conceptos Implementados
+
+- Análisis descendente recursivo
+  
+- Algoritmo de emparejamiento (matching)
+  
+- Eliminación de recursión izquierda
+  
+- Gramática LL(1)
+  
+- Manejo de producciones ε (épsilon)
+  
+- Precedencia de operadores
+  
+- Detección de errores sintácticos
+  
+- Generación de árbol de derivación
