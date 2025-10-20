@@ -72,11 +72,11 @@ Terminales
 
 -  < : Menor que
 
--  > : Mayor que
+-   > : Mayor que
 
 -  <= : Menor o igual que
 
--  >= : Mayor o igual que
+-   >= : Mayor o igual que
 
 -  != : Diferente de
 
