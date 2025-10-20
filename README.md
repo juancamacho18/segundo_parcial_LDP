@@ -404,7 +404,7 @@ Uso programación:
         ├── AnalizadorLexico                   # Analizador léxico
         │   └── tokenizar()
         ├── AnalizadorDescendenteRecursivo     # Analizador sintáctico
-        │   ├── emparejar()                    # ⭐ Algoritmo de emparejamiento
+        │   ├── emparejar()                    # Algoritmo de emparejamiento
         │   ├── verificar_prediccion()         # Verifica conjuntos PREDICT
         │   ├── analizar_E()                   # E → T E'
         │   ├── analizar_E_prima()             # E' → + T E' | ε
