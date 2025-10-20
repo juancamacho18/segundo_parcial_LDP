@@ -200,13 +200,23 @@ La gramática soporta:
 
 ## Punto 5: Parser Descendente Recursivo con Algoritmo de Emparejamiento
 
-Implementación de un parser descendente recursivo con algoritmo de emparejamiento (matching) para analizar expresiones aritméticas.
+Implementación de un analizador descendente recursivo con algoritmo de emparejamiento (matching) para analizar expresiones aritméticas. El analizador procesa expresiones con operadores de suma (+) y multiplicación (*), respetando la precedencia de operadores y permitiendo el uso de paréntesis.
 
-El parser analiza expresiones con operadores de suma (+) y multiplicación (*), respetando la precedencia de operadores y permitiendo el uso de paréntesis.
+Características principales:
+
+- Cálculo automático de conjuntos PRIMEROS, SIGUIENTES y PREDICCIÓN
+
+- Validación basada en gramática LL(1)
+
+- Algoritmo de emparejamiento centralizado
+
+- Detección precisa de errores sintácticos
 
 Objetivos
 
 - Implementar un algoritmo de emparejamiento para análisis descendente recursivo
+
+- Calcular conjuntos PRIMEROS, SIGUIENTES y PREDICCION
 
 - Validar la sintaxis de expresiones aritméticas
 
@@ -232,27 +242,107 @@ Gramática
 
 Se eliminó la recursión izquierda para hacer la gramática compatible con el análisis descendente recursivo.
 
+Conjuntos Calculados:
+
+- PRIMEROS
+
+        PRIMERO(E)   = {(, id}
+        PRIMERO(E')  = {+, ε}
+        PRIMERO(F)   = {(, id}
+        PRIMERO(T)   = {(, id}
+        PRIMERO(T')  = {*, ε}
+
+- SIGUIENTES
+
+        SIGUIENTE(E)   = {$, )}
+        SIGUIENTE(E')  = {$, )}
+        SIGUIENTE(F)   = {$, ), *, +}
+        SIGUIENTE(T)   = {$, ), +}
+        SIGUIENTE(T')  = {$, ), +}
+
+- PREDICCION
+
+        E:
+          E → T E'           | PRED = {(, id}
+        
+        E':
+          E' → + T E'        | PRED = {+}
+          E' → ε             | PRED = {$, )}
+        
+        T:
+          T → F T'           | PRED = {(, id}
+        
+        T':
+          T' → * F T'        | PRED = {*}
+          T' → ε             | PRED = {$, ), +}
+        
+        F:
+          F → ( E )          | PRED = {(}
+          F → id             | PRED = {id}
+
 Arquitectura:
 
 - Componentes principales:
 
-1. Lexer (Analizador Léxico)
+1. AnalizadorGramatica
+
+- Calcula automáticamente los conjuntos PRIMEROS, SIGUIENTES y PREDICCIÓN
+
+- Valida que la gramática sea LL(1)
+
+- Imprime los conjuntos calculados de forma legible
+
+Métodos principales:
+
+- calcular_primero(simbolo): Calcula PRIMERO de un símbolo
+
+- calcular_siguientes(): Calcula SIGUIENTES de todos los no-terminales
+
+- calcular_prediccion(): Calcula PREDICCIÓN de cada producción
+
+- imprimir_conjuntos(): Muestra todos los conjuntos
+
+2. Lexer (Analizador Léxico)
 
 - Convierte la cadena de entrada en tokens
 
 - Tokens reconocidos: ID, PLUS (+), MULT (*), LPAREN ((), RPAREN ()), EOF
 
-2. Parser (Analizador Sintáctico)
+Métodos:
+
+- tokenizar(): Procesa el texto de entrada y genera tokens
+
+3. AnalizadorDescendenteRecursivo (Parser)
 
 - Implementa el análisis descendente recursivo
 
 - Una función por cada símbolo no-terminal de la gramática
 
+- Usa conjuntos PREDICCIÓN para decidir qué producción aplicar
+
 - Algoritmo de emparejamiento centralizado
 
-2. Algoritmo de Emparejamiento
+Métodos principales:
 
-- Método match(expected_type): núcleo del algoritmo
+- emparejar(tipo_esperado): 🔑 Algoritmo de emparejamiento
+
+- analizar_E(): E → T E'
+
+- analizar_E_prima(): E' → + T E' | ε
+
+- analizar_T(): T → F T'
+
+- analizar_T_prima(): T' → * F T' | ε
+
+- analizar_F(): F → ( E ) | id
+
+- analizar(): Función principal
+
+- mostrar_resultados(): Muestra resultados y errores
+
+4. Algoritmo de Emparejamiento
+
+- Método emparejar(tipo_esperado): nucleo del algoritmo
 
 - Valida tokens esperados vs tokens encontrados
 
@@ -270,64 +360,81 @@ Uso:
 
         python descendente.py
 
-Esto ejecutará automáticamente los casos de prueba predefinidos.
+Esto ejecutará automáticamente:
+
+- Cálculo de conjuntos PRIMEROS, SIGUIENTES y PREDICCIÓN
+
+- Casos de prueba predefinidos (11 expresiones)
+
+- Resumen de resultados
 
 Uso programación:
 
-    from recursive_descent_parser import Lexer, RecursiveDescentParser
+    from descendente import AnalizadorLexico, AnalizadorDescendenteRecursivo, AnalizadorGramatica
+
+    # Calcular conjuntos
+    analizador_gramatica = AnalizadorGramatica()
+    analizador_gramatica.imprimir_conjuntos()
     
-    # Crear el lexer
-    expression = "a + b * c"
-    lexer = Lexer(expression)
+    # Crear el analizador léxico
+    expresion = "a + b * c"
+    lexico = AnalizadorLexico(expresion)
     
-    # Crear el parser
-    parser = RecursiveDescentParser(lexer.tokens)
+    # Crear el analizador sintáctico
+    analizador = AnalizadorDescendenteRecursivo(lexico.tokens, analizador_gramatica)
     
     # Realizar el análisis
-    success = parser.parse()
+    exito = analizador.analizar()
     
     # Mostrar resultados
-    parser.show_results()
+    analizador.mostrar_resultados()
 
-Probar una Expresión Específica:
-
-    from recursive_descent_parser import test_parser
-    
-    # Probar una expresión
-    test_parser("(a + b) * c")
 
 - Estructura del Código
 
-        recursive_descent_parser.py
-        ├── Token                    # Clase para representar tokens
-        ├── Lexer                    # Analizador léxico
-        │   ├── __init__()
-        │   └── tokenize()
-        ├── RecursiveDescentParser   # Parser principal
-        │   ├── match()              # Algoritmo de emparejamiento
-        │   ├── parse_E()            # E → T E'
-        │   ├── parse_E_prime()      # E' → + T E' | ε
-        │   ├── parse_T()            # T → F T'
-        │   ├── parse_T_prime()      # T' → * F T' | ε
-        │   ├── parse_F()            # F → ( E ) | id
-        │   ├── parse()              # Función principal
-        │   └── show_results()       # Mostrar resultados
-        └── test_parser()            # Función de prueba
+         descendente.py
+        ├── Token                              # Clase para representar tokens
+        ├── AnalizadorGramatica                # Calcula PRIMEROS, SIGUIENTES y PREDICCIÓN
+        │   ├── calcular_primero()
+        │   ├── calcular_primero_cadena()
+        │   ├── calcular_siguientes()
+        │   ├── calcular_prediccion()
+        │   ├── calcular_todos()
+        │   └── imprimir_conjuntos()
+        ├── AnalizadorLexico                   # Analizador léxico
+        │   └── tokenizar()
+        ├── AnalizadorDescendenteRecursivo     # Analizador sintáctico
+        │   ├── emparejar()                    # ⭐ Algoritmo de emparejamiento
+        │   ├── verificar_prediccion()         # Verifica conjuntos PREDICT
+        │   ├── analizar_E()                   # E → T E'
+        │   ├── analizar_E_prima()             # E' → + T E' | ε
+        │   ├── analizar_T()                   # T → F T'
+        │   ├── analizar_T_prima()             # T' → * F T' | ε
+        │   ├── analizar_F()                   # F → ( E ) | id
+        │   ├── analizar()                     # Función principal
+        │   └── mostrar_resultados()           # Mostrar resultados
+        └── probar_analizador()                # Función de prueba
 
 Conceptos Implementados
 
 - Análisis descendente recursivo
-  
+
 - Algoritmo de emparejamiento (matching)
-  
+
 - Eliminación de recursión izquierda
-  
+
 - Gramática LL(1)
-  
+
+- Cálculo de conjuntos PRIMEROS (FIRST)
+
+- Cálculo de conjuntos SIGUIENTES (FOLLOW)
+
+- Cálculo de conjuntos PREDICCIÓN (PREDICT)
+
 - Manejo de producciones ε (épsilon)
-  
+
 - Precedencia de operadores
-  
+
 - Detección de errores sintácticos
-  
+
 - Generación de árbol de derivación
