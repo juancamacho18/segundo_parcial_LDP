@@ -127,3 +127,74 @@ Definición Formal de la Gramática
         { S, SENTENCIA, CREATE, READ, UPDATE, DELETE, CAMPOS, CAMPOS_FINAL, CAMPO, TIPO,
           COLUMNAS, COLUMNAS_FINAL, CONDICION_WHERE, CONDICION, OPER, VALOR,
           ASIGNACIONES, ASIGNACIONES_FINAL, ASIGNACION }
+
+## Punto 2: Proyecto Parser CRUD - ANTLR con Java
+
+Descripción
+Implementación de un analizador léxico y sintáctico para un lenguaje de operaciones CRUD (Create, Read, Update, Delete) usando ANTLR 4 con Java.
+
+Requisitos:
+
+- Java JDK 8 o superior
+
+- ANTLR 4.9 o superior
+
+- Sistema operativo: Windows, Linux o macOS
+
+Estructura del proyecto:
+
+    2/
+    ├── CRUD.g4                 # Gramática ANTLR
+    └── test.sql               # Archivo de pruebas
+
+- Uso
+
+1. Generar el lexer y parser
+
+        antlr4 CRUD.g4
+
+2. Compilar las clases Java
+
+        javac CRUD*.java
+
+3. Probar la gramática
+
+- Modo consola (árbol textual):
+
+        grun CRUD programa test.sql
+
+- Modo árbol gráfico:
+
+        grun CRUD programa test.sql -gui
+
+- Modo tokens:
+
+        grun CRUD programa test.sql -tokens
+
+- Modo árbol en consola:
+
+        grun CRUD programa test.sql -tree
+
+Ejemplos de sentencias válidas
+
+    create table empleados (id int, nombre string, salario float)
+    select * from empleados where salario > 2000
+    update empleados set salario = 3000 where id = 5
+    delete from empleados where nombre = "Juan"
+    select id, nombre from productos where precio <= 100
+
+Gramática implementada
+La gramática soporta:
+
+- CREATE: Creación de tablas con campos tipados
+
+- SELECT: Consultas con o sin condiciones WHERE
+
+- UPDATE: Actualizaciones con múltiples asignaciones
+
+- DELETE: Eliminaciones con condiciones opcionales
+
+- Tipos de datos: int, string, float
+
+- Operadores comparación: =, <, >, <=, >=, !=
+
