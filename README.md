@@ -200,11 +200,305 @@ La gramática soporta:
 
 ## Punto 3: Analizador sintactico ascendente
 
-Implementación de un analizador sintactico ascendente de una gramatica para expresiones aritmeticas simples además de calculadr conjuntos de primeros, siguientes y de predicciones.
+Implementación de un analizador sintactico ascendente de una gramatica para expresiones aritmeticas simples además de calculadr conjuntos de primeros, siguientes y de predicciones. La gramatica a utilizar es la siguiente:
 
+
+Las metas para completar el ejercicio fueron las sigueintes:
+
+*Convertir gramatica LL(1)
+
+La gramatica originalmente esta establecida de esta manera
+
+E->E + T
+
+E->T
+
+T-> T * F
+
+T-> F
+
+F->( E )
+
+F->id
+
+Como se puede notar, hay recursividad hacia la izquierda en las producciones de E y T, por lo que hay que arreglar esto de tal manera de eliminar esa recursividad y de esa manera lograr que la gramatica sea LL(1), realizando esto, entonces la gramatica queda asi
+
+E->T E'
+
+E'-> + T E'
+
+E'->ε
+
+T->F T'
+
+T'->* F T'
+
+T'->ε
+
+F-> ( E )
+
+F-> id
+
+logrando eliminar recursividad, y factores comunes a la izquierda
+
+
+
+*calcular conjuntos de primeros, siguientes y de predicciones
+
+Dentro del programa hay algoritmos para calcular todo los conjuntos, por lo que solo imprimiendolos es posible observar cuales son para la gramatica que se usa (esta obviamente ya trasnformada en LL(1)).
+
+>Primeros:
+>
+>Primero(Term')= {'ε', '*', '/'}
+>
+>Primero(Expr')= {'+', 'ε', '-'}
+>
+>Primero(Expr)= {'id', '('}
+>
+>Primero(Term)= {'id', '('}
+>
+>Primero(Fact)= {'id', '('}
+>
+>
+>Siguientes:
+>
+>Siguiente(Expr)= {'$', ')'}
+>
+>Siguiente(Expr')= {'$', ')'}
+>
+>Siguiente(Term)= {'$', '+', ')', '-'}
+>
+>Siguiente(Term')= {'$', '+', ')', '-'}
+>
+>Siguiente(Fact)= {'-', '$', ')', '+', '*', '/'}
+>
+>
+>
+>Conjuntos de prediccion:
+>
+>Expr -> Term Expr' {'id', '('}
+>
+>Expr' -> + Term Expr' {'+'}
+>
+>Expr' -> - Term Expr' {'-'}
+>
+>Expr' -> ε {'$', ')'}
+>
+>Term -> Fact Term' {'id', '('}
+>
+>Term' -> * Fact Term' {'*'}
+>
+>Term' -> / Fact Term' {'/'}
+>
+>Term' -> ε {'$', '+', ')', '-'}
+>
+>Fact -> ( Expr ) {'('}
+>
+>Fact -> id {'id'}
+
+
+*el algoritmo ascendente
+
+Se realiza el proceso de desplazamiento y reducción (shift-reduce), aplicando las reglas de producción hasta determinar si la expresión es válida.
+
+*pruebas y resultados
+
+realizando las pruebas para las cadenas de cadenas.txt:
+
+id + id * id
+
+( id + id ) * id
+
+( id )
+
+id + ( id / id )
+
+id : id
+
+El resultado que genera al ejecutar el programa, muestra lo siguiente:
+
+    Analizando: id + id * id
+    Pila                                    Entrada                       Acción
+    ------------------------------------------------------------------------------------------
+    id                                      + id * id $                   Desplazar
+    Fact                                    + id * id $                   Reducir: F → id
+    Term                                    + id * id $                   Reducir: T → F
+    Expr                                    + id * id $                   Reducir: E → T
+    Expr +                                  id * id $                     Desplazar
+    Expr + id                               * id $                        Desplazar
+    Expr + Fact                             * id $                        Reducir: F → id
+    Expr + Term                             * id $                        Reducir: T → F
+    Expr                                    * id $                        Reducir: E → E + T
+    Expr *                                  id $                          Desplazar
+    Expr * id                               $                             Desplazar
+    Expr * Fact                             $                             Reducir: F → id
+    Expr * Term                             $                             Reducir: T → F
+    Expr * Expr                             $                             Reducir: E → T
+    Expr * Expr                                                           no aceptado
+    
+    Analizando: ( id + id ) * id
+    Pila                                    Entrada                       Acción
+    ------------------------------------------------------------------------------------------
+    (                                       id + id ) * id $              Desplazar
+    ( id                                    + id ) * id $                 Desplazar
+    ( Fact                                  + id ) * id $                 Reducir: F → id
+    ( Term                                  + id ) * id $                 Reducir: T → F
+    ( Expr                                  + id ) * id $                 Reducir: E → T
+    ( Expr +                                id ) * id $                   Desplazar
+    ( Expr + id                             ) * id $                      Desplazar
+    ( Expr + Fact                           ) * id $                      Reducir: F → id
+    ( Expr + Term                           ) * id $                      Reducir: T → F
+    ( Expr                                  ) * id $                      Reducir: E → E + T
+    ( Expr )                                * id $                        Desplazar
+    Fact                                    * id $                        Reducir: F → ( E )
+    Term                                    * id $                        Reducir: T → F
+    Term *                                  id $                          Desplazar
+    Term * id                               $                             Desplazar
+    Term * Fact                             $                             Reducir: F → id
+    Term                                    $                             Reducir: T → T * F
+    Expr                                    $                             Reducir: E → T
+    Expr                                    $                             aceptado
+    
+    Analizando: ( id )
+    Pila                                    Entrada                       Acción
+    ------------------------------------------------------------------------------------------
+    (                                       id ) $                        Desplazar
+    ( id                                    ) $                           Desplazar
+    ( Fact                                  ) $                           Reducir: F → id
+    ( Term                                  ) $                           Reducir: T → F
+    ( Expr                                  ) $                           Reducir: E → T
+    ( Expr )                                $                             Desplazar
+    Fact                                    $                             Reducir: F → ( E )
+    Term                                    $                             Reducir: T → F
+    Expr                                    $                             Reducir: E → T
+    Expr                                    $                             aceptado
+    
+    Analizando: id + ( id / id )
+    Pila                                    Entrada                       Acción
+    ------------------------------------------------------------------------------------------
+    id                                      + ( id / id ) $               Desplazar
+    Fact                                    + ( id / id ) $               Reducir: F → id
+    Term                                    + ( id / id ) $               Reducir: T → F
+    Expr                                    + ( id / id ) $               Reducir: E → T
+    Expr +                                  ( id / id ) $                 Desplazar
+    Expr + (                                id / id ) $                   Desplazar
+    Expr + ( id                             / id ) $                      Desplazar
+    Expr + ( Fact                           / id ) $                      Reducir: F → id
+    Expr + ( Term                           / id ) $                      Reducir: T → F
+    Expr + ( Term /                         id ) $                        Desplazar
+    Expr + ( Term / id                      ) $                           Desplazar
+    Expr + ( Term / Fact                    ) $                           Reducir: F → id
+    Expr + ( Term                           ) $                           Reducir: T → T / F
+    Expr + ( Expr                           ) $                           Reducir: E → T
+    Expr + ( Expr )                         $                             Desplazar
+    Expr + Fact                             $                             Reducir: F → ( E )
+    Expr + Term                             $                             Reducir: T → F
+    Expr                                    $                             Reducir: E → E + T
+    Expr                                    $                             aceptado
+
+    Analizando: id : id
+    Pila                                    Entrada                       Acción
+    ------------------------------------------------------------------------------------------
+    id                                      : id $                        Desplazar
+    Fact                                    : id $                        Reducir: F → id
+    Term                                    : id $                        Reducir: T → F
+    Expr                                    : id $                        Reducir: E → T
+    Expr :                                  id $                          Desplazar
+    Expr : id                               $                             Desplazar
+    Expr : Fact                             $                             Reducir: F → id
+    Expr : Term                             $                             Reducir: T → F
+    Expr : Expr                             $                             Reducir: E → T
+    Expr : Expr                                                           no aceptado
 
 
 ## Punto 4: Programa comparativo parser con algoritmo CYK y parser de tipo predictivo
+
+Este programa en python permite comparar el rendimiento y funcionamiento de dos algoritmos de análisis sintáctico diferentes, uno CYK y un parser predictivo. El sistema mide el tiempo de ejecución de cada algoritmo al procesar una serie de cadenas con base en una gramática libre de contexto (GLC).
+
+Explicacion:
+
+El programa lee una gramática desde un archivo gramatica.txt y una lista de cadenas desde cadenas.txt, luego ejecuta ambos analizadores sintacticos sobre cada cadena para medir sus tiempos de ejecucion en milisegundos
+
+Debe contener las reglas de producción en formato:
+
+S -> A B
+
+A -> a
+
+B -> b
+
+
+Si una producción es vacía, se escribe:
+
+A -> vacio
+
+
+
+Ejecución del Programa:
+
+
+python comparador_parsers.py
+
+
+ahi pedira ingresar el nombre del archivo con las cadenas,mostrando este resultado por ejemplo:
+
+===Comparacion de parsers===
+
+|cadena | tiempo CYK (ms)  |  tiempo predictivo (ms)|
+|----|-----|-----|
+| a b | 0.812 | 0.144 |
+| a a b | 1.105 | 0.220 |
+| b b a | 0.934 | 0.155 |
+---------------------------------------------------------------------------
+
+
+Explicación de los Parsers
+*CYK
+
+requiere que la gramatica este en Forma Normal de Chomsky (FNC). utiliza una tabla triangular para verificar si la cadena pertenece al lenguaje, además de tener una complejidad de O(n³).
+
+*Predictivo
+
+Utiliza una pila y un conjunto de reglas para expandir los no terminales y funcionando mejor con gramáticas LL(1).
+
+Su complejidad es O(n) en el mejor caso.
+
+--------------------------------------------------------------------------
+
+Pruebas
+
+para el desarrollo del programa se uso la siguiente gramatica que esta incluida en el ejercicio:
+
+>S->A uno B C
+>
+>S->S dos
+>
+>A->B C D
+>
+>A->A tres
+>
+>A->vacio
+>
+>B->D cuatro C tres
+>
+>B->vacio
+>
+>C->cinco D B
+>
+>C->vacio
+>
+>D->seis
+>
+>D->vacio
+
+y al ejecutar probando con el archivo de cadenas, estos son los resultados que muestran:
+
+|cadena | tiempo CYK (ms)  |  tiempo predictivo (ms)|
+|----|-----|-----|
+| a b | 0.812 | 0.144 |
+| a a b | 1.105 | 0.220 |
+| b b a | 0.934 | 0.155 |
+---------------------------------------------------------------------------
 
 ## Punto 5: Parser Descendente Recursivo con Algoritmo de Emparejamiento
 
