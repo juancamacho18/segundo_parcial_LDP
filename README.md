@@ -749,3 +749,6 @@ Conceptos Implementados
 - Detección de errores sintácticos
 
 - Generación de árbol de derivación
+
+
+Juan Esteban Martinez Cantero y Juan Camilo Camacho Mejía 
